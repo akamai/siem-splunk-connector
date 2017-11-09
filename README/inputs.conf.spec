@@ -1,6 +1,4 @@
 [TA-Akamai_SIEM://<name>]
-rest_username = <value>
-rest_password = <value>
 hostname = <value>
 * API Endpoint
 security_configuration_id_s_ = <value>
