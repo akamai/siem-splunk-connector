@@ -9,3 +9,4 @@ access_token = <value>
 initial_epoch_time = <value>
 final_epoch_time = <value>
 limit = <value>
+log_level = <value>
