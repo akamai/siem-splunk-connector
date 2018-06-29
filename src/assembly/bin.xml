@@ -3,14 +3,14 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	<!--  <id>bundle</id> -->
+	<id>bundle</id>
 	<formats>
 		<format>tar.gz</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 	  <fileSet>
-	    <directory>.</directory>
+	    <directory>${basedir}</directory>
 	    <outputDirectory>TA-Akamai_SIEM</outputDirectory>
 	    <includes>
 	      <include>linux_x86_64/**/*</include>
@@ -22,7 +22,7 @@
 	    <fileMode>0755</fileMode>
 	  </fileSet>
 	  <fileSet>
-	    <directory>.</directory>
+	    <directory>${basedir}</directory>
 	    <outputDirectory>TA-Akamai_SIEM</outputDirectory>
 	    <excludes>
 	      <exclude>dist/**/*</exclude>
@@ -36,7 +36,13 @@
 		  <exclude>windows_x86_64/**/*</exclude>
 	    </excludes>
 	    <includes>
-	    	<include>**/*</include>
+	    	<include>default/**/*</include>
+	    	<include>jars/**/*</include>
+	    	<include>lookups/**/*</include>
+	    	<include>metadata/**/*</include>
+	    	<include>README/**/*</include>
+	    	<include>static/**/*</include>
+	    	<include>README.txt</include>
 	    </includes>
 	    <fileMode>0644</fileMode>
 	  </fileSet>

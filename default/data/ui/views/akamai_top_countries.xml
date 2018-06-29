@@ -9,8 +9,8 @@
       </default>
     </input>
     <input type="text" token="field1">
-      <label>Sourcetype</label>
-      <default>akamaisiem</default>
+      <label>source</label>
+      <default>*ta-akamai_siem*</default>
     </input>
   </fieldset>
   <row>
@@ -18,7 +18,7 @@
       <title>Events by Country</title>
       <map>
         <search>
-          <query>sourcetype=$field1$  | lookup countrycodes code as "geo.country" OUTPUTNEW lat as latitude, lon as longitude | geostats latfield=latitude longfield=longitude count by "geo.country"</query>
+          <query>source=$field1$  | lookup countrycodes code as "geo.country" OUTPUTNEW lat as latitude, lon as longitude | geostats latfield=latitude longfield=longitude count by "geo.country"</query>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="mapping.type">marker</option>
@@ -29,7 +29,7 @@
     <panel>
       <table>
         <search>
-          <query>sourcetype=$field1$  | stats count by "geo.country" | lookup countrycodes code as "geo.country" OUTPUTNEW lat as latitude, lon as longitude</query>
+          <query>source=$field1$  | stats count by "geo.country" | lookup countrycodes code as "geo.country" OUTPUTNEW lat as latitude, lon as longitude</query>
         </search>
       </table>
     </panel>

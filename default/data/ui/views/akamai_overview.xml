@@ -14,8 +14,8 @@
       </default>
     </input>
     <input type="text" token="field1">
-      <label>Sourcetype</label>
-      <default>akamaisiem</default>
+      <label>source</label>
+      <default>*ta-akamai_siem*</default>
     </input>
   </fieldset>
   <row>
@@ -23,7 +23,7 @@
       <title>Top Client IP</title>
       <chart>
         <search>
-          <query>sourcetype=$field1$ | top limit=$limit$ "attackData.clientIP"</query>
+          <query>source=$field1$ | top limit=$limit$ "attackData.clientIP"</query>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -55,7 +55,7 @@
       <title>Top Client IP</title>
       <chart>
         <search>
-          <query>sourcetype=$field1$ | top limit=$limit$ "attackData.clientIP"</query>
+          <query>source=$field1$ | top limit=$limit$ "attackData.clientIP"</query>
         </search>
         <option name="charting.chart">pie</option>
       </chart>
@@ -66,7 +66,7 @@
       <title>Top Client IP</title>
       <table>
         <search>
-          <query>sourcetype=$field1$ | top limit=$limit$ "attackData.clientIP"</query>
+          <query>source=$field1$ | top limit=$limit$ "attackData.clientIP"</query>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">20</option>
@@ -84,7 +84,7 @@
       <title>Top API ID</title>
       <chart>
         <search>
-          <query>sourcetype=$field1$ | timechart count by "attackData.apiId" usenull=f useother=f</query>
+          <query>source=$field1$ | timechart count by "attackData.apiId" usenull=f useother=f</query>
         </search>
         <option name="charting.chart">column</option>
         <option name="charting.chart.stackMode">stacked</option>
@@ -96,7 +96,7 @@
       <title>Top API ID</title>
       <chart>
         <search>
-          <query>sourcetype=$field1$ | top limit=$limit$ "attackData.apiId"</query>
+          <query>source=$field1$ | top limit=$limit$ "attackData.apiId"</query>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -128,7 +128,7 @@
       <title>Top API ID</title>
       <chart>
         <search>
-          <query>sourcetype=$field1$ | top limit=$limit$ "attackData.apiId"</query>
+          <query>source=$field1$ | top limit=$limit$ "attackData.apiId"</query>
         </search>
         <option name="charting.chart">pie</option>
       </chart>
@@ -139,7 +139,7 @@
       <title>Top Hosts</title>
       <chart>
         <search>
-          <query>sourcetype=$field1$ | top limit=$limit$ "httpMessage.host"</query>
+          <query>source=$field1$ | top limit=$limit$ "httpMessage.host"</query>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -173,7 +173,7 @@
       <title>Top Hosts</title>
       <table>
         <search>
-          <query>sourcetype=$field1$ | top limit=$limit$ "httpMessage.host"</query>
+          <query>source=$field1$ | top limit=$limit$ "httpMessage.host"</query>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">20</option>

@@ -14,7 +14,7 @@
       <single>
         <title>Error Events</title>
         <search>
-          <query>index="_internal" sourcetype="splunkd" TAAkamai_SIEM CASE(ERROR) | stats count as TotalErrors</query>
+          <query>index="_internal" sourcetype="splunkd" *ta-akamai_siem* CASE(ERROR) | stats count as TotalErrors</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
         </search>
@@ -24,7 +24,7 @@
       <single>
         <title>Info Events</title>
         <search>
-          <query>index="_internal" sourcetype="splunkd" TAAkamai_SIEM CASE(INFO) | stats count as TotalInfo</query>
+          <query>index="_internal" sourcetype="splunkd" *ta-akamai_siem* CASE(INFO) | stats count as TotalInfo</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
         </search>
@@ -34,7 +34,7 @@
       <single>
         <title>Total Events</title>
         <search>
-          <query>index="_internal" sourcetype="splunkd" TAAkamai_SIEM | stats count as TotalEvents</query>
+          <query>index="_internal" sourcetype="splunkd" *ta-akamai_siem* | stats count as TotalEvents</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
         </search>
@@ -46,7 +46,7 @@
       <event>
         <title>Akamai SIEM Logs</title>
         <search>
-          <query>index="_internal" sourcetype="splunkd" TAAkamai_SIEM</query>
+          <query>index="_internal" sourcetype="splunkd" *ta-akamai_siem*</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
         </search>
@@ -56,7 +56,7 @@
       <event>
         <title>Akamai SIEM Errors</title>
         <search>
-          <query>index="_internal" sourcetype="splunkd" TAAkamai_SIEM CASE(ERROR)</query>
+          <query>index="_internal" sourcetype="splunkd" *ta-akamai_siem* CASE(ERROR)</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
         </search>
