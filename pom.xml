@@ -79,6 +79,18 @@
       </plugin>    
     </plugins>
   </build>
+  <distributionManagement>
+    <repository>
+      <id>nexus</id>
+      <name>Luna Common Release</name>
+      <url>https://lunabuild.akamai.com/nexus/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus</id>
+      <name>Luna Common Snapshots</name>
+      <url>https://lunabuild.akamai.com/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
   <dependencies>
     <dependency>
       <groupId>commons-codec</groupId>
