@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +41,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.splunk.HttpService;
+import com.splunk.Password;
+import com.splunk.PasswordCollection;
 import com.splunk.RequestMessage;
 import com.splunk.ResponseMessage;
 import com.splunk.SSLSecurityProtocol;
@@ -62,10 +65,7 @@ import com.splunk.modularinput.ValidationDefinition;
 //Scheme.setUseExternalValidation(true) called on it, the validateInput method. The user must provide a main
 //method since static methods can't be inherited in Java. However, the main is very simple.
 public class Main extends Script {
-	private static String _MASK_ = "<nothing to see here>";
-	private static String _APP_ = null;
-	private static String _USERNAME_ = null;
-	private static String _CLEAR_PASSWORD_ = null;
+	private static String _MASK_ = "<hidden>";
 
 	private static String _KV_STORE_NAME_ = "akamai_state";
 	private static String _KV_STORE_AKAMAI_OFFSET_BASED_TOKEN_ = "offset";
@@ -154,7 +154,6 @@ public class Main extends Script {
 								}
 
 								sb2.append(decode(ss));
-
 							}
 
 							decodedValues.add(sb2.toString());
@@ -176,7 +175,6 @@ public class Main extends Script {
 							}
 
 							sb2.append(decode(ss));
-
 						}
 
 						JsonElement element = new JsonPrimitive(sb2.toString());
@@ -188,8 +186,6 @@ public class Main extends Script {
 				} else {
 					JsonElement element = new JsonPrimitive("");
 					entry.setValue(element);
-
-					System.out.println("tokenizedResult is zero");
 				}
 			}
 		}
@@ -319,18 +315,6 @@ public class Main extends Script {
 		}
 	}
 
-	private static void encrypt_password(String username, String password, String session_key) {
-
-	}
-
-	private static void mask_password(String session_key, String username) {
-
-	}
-
-	private static String get_password(String session_key, String username) {
-		return (null);
-	}
-
 	public static void main(String[] args) throws Exception {
 		new Main().run(args);
 	}
@@ -364,7 +348,6 @@ public class Main extends Script {
 		security_configuration_id_s_Argument.setDescription("[semicolon delimited]");
 		security_configuration_id_s_Argument.setRequiredOnCreate(true);
 		security_configuration_id_s_Argument.setRequiredOnEdit(true);
-		security_configuration_id_s_Argument.setDataType(DataType.NUMBER);
 		scheme.addArgument(security_configuration_id_s_Argument);
 
 		Argument client_tokenArgument = new Argument("client_token");
@@ -445,12 +428,18 @@ public class Main extends Script {
 		// and getValue to get the string representation.
 
 		try {
+
+			HttpService.setSslSecurityProtocol(SSLSecurityProtocol.TLSv1_2);
+
 			ew.synchronizedLog(EventWriter.INFO, "infoMsg=\"begin validate input\"");
 
 			ew.synchronizedLog(EventWriter.INFO, "infoMsg=\"stanza name = " + definition.getName() + "\"");
 
 			String log_level = ((SingleValueParameter) definition.getParameters().get("log_level")).getValue();
 			ew.synchronizedLog(EventWriter.INFO, String.format("log_level=%s", log_level));
+
+			String session_key = definition.getSessionKey();
+			writeLog(EventWriter.DEBUG, log_level, String.format("session_key=%s", session_key), ew);
 
 			String hostname = ((SingleValueParameter) definition.getParameters().get("hostname")).getValue();
 			if ((hostname != null) && (hostname.isEmpty() == false)) {
@@ -467,20 +456,31 @@ public class Main extends Script {
 			writeLog(EventWriter.DEBUG, log_level, String.format("client_token=%s", client_token), ew);
 
 			String client_secret = ((SingleValueParameter) definition.getParameters().get("client_secret")).getValue();
-			writeLog(EventWriter.DEBUG, log_level, String.format("client_secret=%s", client_secret), ew);
+			// writeLog(EventWriter.DEBUG, log_level, String.format("client_secret=%s",
+			// client_secret), ew);
 
 			String access_token = ((SingleValueParameter) definition.getParameters().get("access_token")).getValue();
 			writeLog(EventWriter.DEBUG, log_level, String.format("access_token=%s", access_token), ew);
 
-			String initial_epoch_time = ((SingleValueParameter) definition.getParameters().get("initial_epoch_time"))
-					.getValue();
+			String initial_epoch_time = "";
+			SingleValueParameter svp = ((SingleValueParameter) definition.getParameters().get("initial_epoch_time"));
+			if (svp != null) {
+				initial_epoch_time = svp.getValue();
+			}
 			writeLog(EventWriter.DEBUG, log_level, String.format("initial_epoch_time=%s", initial_epoch_time), ew);
 
-			String final_epoch_time = ((SingleValueParameter) definition.getParameters().get("final_epoch_time"))
-					.getValue();
+			String final_epoch_time = "";
+			svp = ((SingleValueParameter) definition.getParameters().get("final_epoch_time"));
+			if (svp != null) {
+				final_epoch_time = svp.getValue();
+			}
 			writeLog(EventWriter.DEBUG, log_level, String.format("final_epoch_time=%s", final_epoch_time), ew);
 
-			String limit = ((SingleValueParameter) definition.getParameters().get("limit")).getValue();
+			String limit = "";
+			svp = ((SingleValueParameter) definition.getParameters().get("limit"));
+			if (svp != null) {
+				limit = svp.getValue();
+			}
 			writeLog(EventWriter.DEBUG, log_level, String.format("limit=%s", limit), ew);
 
 			List<String> errors = new ArrayList<String>();
@@ -539,6 +539,30 @@ public class Main extends Script {
 
 			writeLog(EventWriter.DEBUG, log_level, "Begin Client Secret validation", ew);
 			if ((client_secret != null) && (client_secret.isEmpty() == false)) {
+
+				ServiceArgs akamaiServiceArgs = new ServiceArgs();
+				akamaiServiceArgs.setHost("localhost");
+				akamaiServiceArgs.setToken("Splunk " + session_key);
+				akamaiServiceArgs.setPort(8089);
+				akamaiServiceArgs.setScheme("https");
+				akamaiServiceArgs.setApp("TA-Akamai_SIEM");
+
+				writeLog(EventWriter.INFO, log_level, "infoMsg=\"Service connect...\"", ew);
+				Service akamaiSplunkService = Service.connect(akamaiServiceArgs);
+
+				writeLog(EventWriter.DEBUG, log_level, "get password service...", ew);
+				PasswordCollection pColl = akamaiSplunkService.getPasswords();
+				writeLog(EventWriter.DEBUG, log_level, "construct stanza...", ew);
+				String key = String.format("%s:client_secret:", definition.getName());
+				writeLog(EventWriter.DEBUG, log_level, key, ew);
+
+				if (this._MASK_.equalsIgnoreCase(client_secret) == true) {
+					if (pColl.containsKey(key) == false) {
+						errors.add("Please specify a valid Client Secret");
+					}
+				}
+
+				writeLog(EventWriter.DEBUG, log_level, "password validation complete", ew);
 
 			} else {
 				errors.add("Please specify a valid Client Secret");
@@ -617,12 +641,8 @@ public class Main extends Script {
 			writeLog(EventWriter.DEBUG, log_level, "Error Checking complete", ew);
 
 			String instance_stanza = definition.getName();
+
 			writeLog(EventWriter.DEBUG, log_level, String.format("instance_stanza=%s", instance_stanza), ew);
-
-			String session_key = definition.getSessionKey();
-			writeLog(EventWriter.DEBUG, log_level, String.format("session_key=%s", session_key), ew);
-
-			HttpService.setSslSecurityProtocol(SSLSecurityProtocol.TLSv1_2);
 
 			ServiceArgs serviceArgs = new ServiceArgs();
 
@@ -684,7 +704,7 @@ public class Main extends Script {
 			if (kvStoreStanza != null) {
 				writeLog(EventWriter.DEBUG, log_level, "infoMsg=\"Found kvStoreStanza\"", ew);
 				Gson gson = new Gson();
-				kvStoreStanza.stanza_change = 1;
+				kvStoreStanza.stanza_change = "1";
 				writeLog(EventWriter.DEBUG, log_level, "kvStoreStanza=\"" + gson.toJson(kvStoreStanza) + "\"", ew);
 
 				RequestMessage requestMessage = new RequestMessage("POST");
@@ -721,6 +741,10 @@ public class Main extends Script {
 	@Override
 	public void streamEvents(InputDefinition inputs, EventWriter ew)
 			throws MalformedDataException, XMLStreamException, IOException {
+
+		HttpService.setSslSecurityProtocol(SSLSecurityProtocol.TLSv1_2);
+
+		// try {
 		// BasicConfigurator.configure();
 		ew.synchronizedLog(EventWriter.INFO, "infoMsg=\"begin streamEvents\"");
 		// writeLog(EventWriter.INFO, inputs.getInputs().keySet().toString());
@@ -730,6 +754,7 @@ public class Main extends Script {
 			String log_level = "";
 			try {
 				log_level = ((SingleValueParameter) inputs.getInputs().get(inputName).get("log_level")).getValue();
+				log_level = log_level.toUpperCase();
 				if ((log_level != null) && (log_level.isEmpty() == false)) {
 					if ((log_level.equalsIgnoreCase(EventWriter.DEBUG) == false)
 							&& (log_level.equalsIgnoreCase(EventWriter.WARN) == false)
@@ -771,7 +796,7 @@ public class Main extends Script {
 
 			String client_secret = ((SingleValueParameter) inputs.getInputs().get(inputName).get("client_secret"))
 					.getValue();
-			// writeLog(EventWriter.INFO, client_secret);
+			// writeLog(EventWriter.DEBUG, log_level, "client_secret=" + client_secret, ew);
 
 			String access_token = ((SingleValueParameter) inputs.getInputs().get(inputName).get("access_token"))
 					.getValue();
@@ -807,13 +832,65 @@ public class Main extends Script {
 			String sessionKey = inputs.getSessionKey();
 			writeLog(EventWriter.DEBUG, log_level, "sessionKey=" + sessionKey, ew);
 
+			if (this._MASK_.equalsIgnoreCase(client_secret) == true) {
+
+				ServiceArgs akamaiServiceArgs = new ServiceArgs();
+
+				akamaiServiceArgs.setHost("localhost");
+				akamaiServiceArgs.setToken("Splunk " + sessionKey);
+				akamaiServiceArgs.setPort(8089);
+				akamaiServiceArgs.setScheme("https");
+				akamaiServiceArgs.setApp("TA-Akamai_SIEM");
+
+				writeLog(EventWriter.INFO, log_level, "infoMsg=\"Service connect...\"", ew);
+				Service akamaiSplunkService = Service.connect(akamaiServiceArgs);
+
+				RequestMessage akamaiRequestMessage = new RequestMessage("GET");
+				// inputName=TA-Akamai_SIEM://csxcz
+				String inputStanza = inputName.replace("TA-Akamai_SIEM://", "");
+				String modInput = String.format(
+						"/servicesNS/nobody/TA-Akamai_SIEM/data/inputs/TA-Akamai_SIEM/%s?output_mode=json",
+						URLEncoder.encode(inputStanza, "UTF-8"));
+
+				writeLog(EventWriter.DEBUG, log_level, "infoMsg=\"" + modInput + "\"", ew);
+				ResponseMessage akamairm = akamaiSplunkService.send(modInput, akamaiRequestMessage);
+				writeLog(EventWriter.DEBUG, log_level, "infoMsg=\"" + akamairm.getStatus() + "\"", ew);
+
+				BufferedReader akamaiReader = new BufferedReader(new InputStreamReader(akamairm.getContent(), "UTF-8"));
+				while (true) {
+					String line = akamaiReader.readLine();
+					if (line == null) {
+						break;
+					}
+
+					Gson gson = new Gson();
+
+					InputStanza is = gson.fromJson(line, InputStanza.class);
+					List<com.akamai.siem.Entry> entries = is.getEntry();
+					if (entries != null) {
+						for (com.akamai.siem.Entry entry : entries) {
+							Content content = entry.getContent();
+							String clientSecret = content.getClientSecret();
+
+							PasswordCollection pColl = akamaiSplunkService.getPasswords();
+
+							String key = String.format("%s:client_secret:", inputStanza);
+							if (pColl.containsKey(key) == true) {
+								Password p = pColl.get(key);
+								client_secret = p.getClearPassword();
+							}
+						}
+					}
+				}
+			}
+
+			writeLog(EventWriter.DEBUG, log_level, "client_secret=" + client_secret, ew);
+
 			// Splunk Enterprise calls the modular input,
 			// streams XML describing the inputs to stdin,
 			// and waits for XML on stdout describing events.
 
 			writeLog(EventWriter.INFO, log_level, "infoMsg=\"Processing Data...\"", ew);
-
-			HttpService.setSslSecurityProtocol(SSLSecurityProtocol.TLSv1_2);
 
 			ServiceArgs serviceArgs = new ServiceArgs();
 
@@ -918,13 +995,13 @@ public class Main extends Script {
 								if (numLines == 0) {
 									Event event = new Event();
 									event.setStanza(inputName);
-									event.setData("No New Data");
+									event.setData("{\"infoMsg\": \"noNewData\"}");
 									ew.writeEvent(event);
 								}
 
 								writeLog(EventWriter.INFO, log_level, "infoMsg=\"parsing last line\"", ew);
 								writeLog(EventWriter.INFO, log_level,
-										"infoMsg=\"numLines=" + String.valueOf(numLines) + "\"", ew);
+										"infoMsg=\"numLines is " + String.valueOf(numLines) + "\"", ew);
 								writeLog(EventWriter.INFO, log_level, "line=" + line, ew);
 
 								String newOffset = "";
@@ -939,19 +1016,19 @@ public class Main extends Script {
 								if (kvStoreStanza != null) {
 									kvStoreStanza.offset = newOffset;
 									kvStoreStanza.error_count = 0;
-									kvStoreStanza.stanza_change = 0;
+									kvStoreStanza.stanza_change = "0";
 									kvStoreStanza.stanza = inputName;
 
 									writeLog(EventWriter.DEBUG, log_level,
 											"kvStoreStanza=\"" + gson.toJson(kvStoreStanza) + "\"", ew);
 
-									RequestMessage requestMessage = new RequestMessage("POST");
-									requestMessage.getHeader().put("Content-Type", "application/json");
-									requestMessage.setContent(gson.toJson(kvStoreStanza));
+									RequestMessage requestMessagex = new RequestMessage("POST");
+									requestMessagex.getHeader().put("Content-Type", "application/json");
+									requestMessagex.setContent(gson.toJson(kvStoreStanza));
 
 									ResponseMessage rm2 = splunkService.send(String.format(
 											"/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/%s",
-											kvStoreStanza._key), requestMessage);
+											kvStoreStanza._key), requestMessagex);
 									writeLog(EventWriter.DEBUG, log_level,
 											"getStatus=" + String.valueOf(rm2.getStatus()), ew);
 								} else {
@@ -963,13 +1040,13 @@ public class Main extends Script {
 									writeLog(EventWriter.DEBUG, log_level,
 											"kvStoreStanza=\"" + gson.toJson(kvStoreStanza) + "\"", ew);
 
-									RequestMessage requestMessage = new RequestMessage("POST");
-									requestMessage.getHeader().put("Content-Type", "application/json");
-									requestMessage.setContent(gson.toJson(kvStoreStanza));
+									RequestMessage requestMessagex = new RequestMessage("POST");
+									requestMessagex.getHeader().put("Content-Type", "application/json");
+									requestMessagex.setContent(gson.toJson(kvStoreStanza));
 
 									ResponseMessage rm2 = splunkService.send(
 											"/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/",
-											requestMessage);
+											requestMessagex);
 									writeLog(EventWriter.DEBUG, log_level,
 											"getStatus=" + String.valueOf(rm2.getStatus()), ew);
 								}
@@ -1012,9 +1089,10 @@ public class Main extends Script {
 				} else {
 
 					String responseData = EntityUtils.toString(response.getEntity());
-					String errorEvent = "error=Status Code not 200: [" + statusCode + "] : " + responseData;
+					String errorEvent = "\"Status Code not 200 (" + statusCode + ")\"";
 
 					writeLog(EventWriter.ERROR, log_level, "errorEvent=" + errorEvent, ew);
+					writeLog(EventWriter.ERROR, log_level, responseData, ew);
 
 					Event event = new Event();
 					event.setStanza(inputName);
@@ -1038,7 +1116,7 @@ public class Main extends Script {
 
 					kvStoreStanza.offset = offset;
 					kvStoreStanza.error_count = error_count;
-					kvStoreStanza.stanza_change = 0;
+					kvStoreStanza.stanza_change = "0";
 					kvStoreStanza.stanza = inputName;
 
 					writeLog(EventWriter.DEBUG, log_level, "kvStoreStanza=\"" + gson.toJson(kvStoreStanza) + "\"", ew);
@@ -1067,7 +1145,7 @@ public class Main extends Script {
 				e.printStackTrace();
 
 				String responseData = EntityUtils.toString(response.getEntity());
-				String errorEvent = "error=\"Exception processing response\"";
+				String errorEvent = "\"Exception processing response\"";
 
 				writeLog(EventWriter.ERROR, log_level, "errorEvent=" + errorEvent, ew);
 
@@ -1093,24 +1171,24 @@ public class Main extends Script {
 
 				kvStoreStanza.offset = offset;
 				kvStoreStanza.error_count = error_count;
-				kvStoreStanza.stanza_change = 0;
+				kvStoreStanza.stanza_change = "0";
 				kvStoreStanza.stanza = inputName;
 
 				writeLog(EventWriter.DEBUG, log_level, "kvStoreStanza=\"" + gson.toJson(kvStoreStanza) + "\"", ew);
 
-				RequestMessage requestMessage = new RequestMessage("POST");
-				requestMessage.getHeader().put("Content-Type", "application/json");
-				requestMessage.setContent(gson.toJson(kvStoreStanza));
+				RequestMessage requestMessagex = new RequestMessage("POST");
+				requestMessagex.getHeader().put("Content-Type", "application/json");
+				requestMessagex.setContent(gson.toJson(kvStoreStanza));
 
 				ResponseMessage rm2 = null;
 				if (stanzaExists == true) {
 					rm2 = splunkService.send(
 							String.format("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/%s",
 									kvStoreStanza._key),
-							requestMessage);
+							requestMessagex);
 				} else {
 					rm2 = splunkService.send("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/",
-							requestMessage);
+							requestMessagex);
 				}
 
 				writeLog(EventWriter.DEBUG, log_level, "getStatus=" + String.valueOf(rm2.getStatus()), ew);
@@ -1119,8 +1197,162 @@ public class Main extends Script {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
+			MyRunnable myRunnable = new MyRunnable(sessionKey, log_level, inputName, this._MASK_, ew);
+			Thread t = new Thread(myRunnable);
+			t.start();
 		}
 
 		ew.synchronizedLog(EventWriter.INFO, "infoMsg=\"end streamEvents\"");
 	}
+
+	public class MyRunnable implements Runnable {
+
+		private String sessionKey;
+		private String log_level;
+		private String inputName;
+		private String _MASK_;
+		private EventWriter ew;
+
+		public MyRunnable(String sessionKey, String log_level, String inputName, String _MASK_, EventWriter ew) {
+			this.sessionKey = sessionKey;
+			this.log_level = log_level;
+			this.inputName = inputName;
+			this._MASK_ = _MASK_;
+			this.ew = ew;
+		}
+
+		public void run() {
+			try {
+				HttpService.setSslSecurityProtocol(SSLSecurityProtocol.TLSv1_2);
+
+				writeLog(EventWriter.INFO, log_level, "infoMsg=\"Begin client secret crypto...\"", ew);
+
+				ServiceArgs akamaiServiceArgs = new ServiceArgs();
+
+				akamaiServiceArgs.setHost("localhost");
+				akamaiServiceArgs.setToken("Splunk " + sessionKey);
+				akamaiServiceArgs.setPort(8089);
+				akamaiServiceArgs.setScheme("https");
+				akamaiServiceArgs.setApp("TA-Akamai_SIEM");
+
+				writeLog(EventWriter.DEBUG, log_level, "infoMsg=\"Service connect...\"", ew);
+				Service akamaiSplunkService = Service.connect(akamaiServiceArgs);
+
+				RequestMessage akamaiRequestMessage = new RequestMessage("GET");
+				// inputName=TA-Akamai_SIEM://csxcz
+				String inputStanza = inputName.replace("TA-Akamai_SIEM://", "");
+				String modInput = String.format(
+						"/servicesNS/nobody/TA-Akamai_SIEM/data/inputs/TA-Akamai_SIEM/%s?output_mode=json",
+						URLEncoder.encode(inputStanza, "UTF-8"));
+
+				writeLog(EventWriter.DEBUG, log_level, "infoMsg=\"" + modInput + "\"", ew);
+				ResponseMessage akamairm = akamaiSplunkService.send(modInput, akamaiRequestMessage);
+				writeLog(EventWriter.DEBUG, log_level, "infoMsg=\"" + akamairm.getStatus() + "\"", ew);
+
+				BufferedReader akamaiReader = new BufferedReader(new InputStreamReader(akamairm.getContent(), "UTF-8"));
+				while (true) {
+					String line = akamaiReader.readLine();
+					if (line == null) {
+						break;
+					}
+
+					Gson gson = new Gson();
+
+					InputStanza is = gson.fromJson(line, InputStanza.class);
+					List<com.akamai.siem.Entry> entries = is.getEntry();
+					if (entries != null) {
+						for (com.akamai.siem.Entry entry : entries) {
+							Content content = entry.getContent();
+							String clientSecret = content.getClientSecret();
+							if (this._MASK_.equals(clientSecret) == false) {
+								PasswordCollection pColl = akamaiSplunkService.getPasswords();
+
+								String key = String.format("%s:client_secret:", inputStanza);
+								if (pColl.containsKey(key) == true) {
+									pColl.remove(key);
+								}
+								pColl.create("client_secret", clientSecret, inputStanza);
+
+								content.setClientSecret(this._MASK_);
+
+								RequestMessage requestMessage2 = new RequestMessage("POST");
+								requestMessage2.getHeader().put("Content-Type", "application/x-www-form-urlencoded");
+
+								String formurlencoded = "access_token="
+										+ URLEncoder.encode(content.getAccessToken(), "UTF-8") + "&client_secret="
+										+ URLEncoder.encode(content.getClientSecret(), "UTF-8") + "&client_token="
+										+ URLEncoder.encode(content.getClientToken(), "UTF-8") + "&hostname="
+										+ URLEncoder.encode(content.getHostname(), "UTF-8")
+										+ "&security_configuration_id_s_="
+										+ URLEncoder.encode(content.getSecurityConfigurationIdS(), "UTF-8");
+
+								if (content.getFinalEpochTime() != null) {
+									formurlencoded += ("&final_epoch_time="
+											+ URLEncoder.encode(content.getFinalEpochTime().toString(), "UTF-8"));
+								}
+
+								if (content.getHost() != null) {
+									formurlencoded += ("&host=" + URLEncoder.encode(content.getHost(), "UTF-8"));
+								}
+
+								if (content.getIndex() != null) {
+									formurlencoded += ("&index=" + URLEncoder.encode(content.getIndex(), "UTF-8"));
+								}
+
+								if (content.getInitialEpochTime() != null) {
+									formurlencoded += ("&initial_epoch_time="
+											+ URLEncoder.encode(content.getInitialEpochTime().toString(), "UTF-8"));
+								}
+
+								if (content.getInterval() != null) {
+									formurlencoded += ("&interval="
+											+ URLEncoder.encode(content.getInterval(), "UTF-8"));
+								}
+
+								if (content.getLimit() != null) {
+									formurlencoded += ("&limit="
+											+ URLEncoder.encode(content.getLimit().toString(), "UTF-8"));
+								}
+
+								if (content.getLogLevel() != null) {
+									formurlencoded += ("&log_level="
+											+ URLEncoder.encode(content.getLogLevel(), "UTF-8"));
+								}
+
+								if (content.getSourcetype() != null) {
+									formurlencoded += ("&sourcetype="
+											+ URLEncoder.encode(content.getSourcetype(), "UTF-8"));
+								}
+
+								writeLog(EventWriter.DEBUG, log_level, "infoMsg=\"" + formurlencoded + "\"", ew);
+
+								requestMessage2.setContent(formurlencoded);
+
+								/*
+								 * client_secret=%3Cfothing%20to%20see%20here%3E" &access_token=fdsajkl
+								 * &client_token=fjskdal &hostname=fdjlksajfdasl
+								 * &security_configuration_id_s_=fkjdslflsdkjfds");
+								 */
+								ResponseMessage rm2 = akamaiSplunkService.send(String.format(
+										"/servicesNS/nobody/TA-Akamai_SIEM/data/inputs/TA-Akamai_SIEM/%s?output_mode=json",
+										URLEncoder.encode(inputStanza, "UTF-8")), requestMessage2);
+								writeLog(EventWriter.DEBUG, log_level, "getStatus=" + String.valueOf(rm2.getStatus()),
+										ew);
+								BufferedReader reader2 = new BufferedReader(
+										new InputStreamReader(rm2.getContent(), "UTF-8"));
+
+							}
+
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			writeLog(EventWriter.INFO, log_level, "infoMsg=\"End client secret crypto\"", ew);
+		}
+	}
+
 }
