@@ -57,7 +57,7 @@
             <id>rename-file2</id>
             <phase>prepare-package</phase>
             <goals>
-              <goal>rename</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
               <sourceFile>target/TA-Akamai_SIEM-${project.version}-jar-with-dependencies.jar</sourceFile>
@@ -68,7 +68,7 @@
             <id>rename-file</id>
             <phase>package</phase>
             <goals>
-              <goal>rename</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
               <sourceFile>target/TA-Akamai_SIEM-${project.version}-bundle.tar.gz</sourceFile>
@@ -87,7 +87,7 @@
      <repository>
         <id>in-project</id>
         <name>In Project Repo</name>
-        <url>file://${project.basedir}/local-maven-repo</url>
+        <url>file://${project.basedir}/libs</url>
       </repository>
   </repositories>
   <dependencies>
