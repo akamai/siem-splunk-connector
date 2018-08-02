@@ -79,17 +79,18 @@
       </plugin>    
     </plugins>
   </build>
-  <repositories>
+  <distributionManagement>
     <repository>
-      <id>java.net</id>
-      <url>https://repo1.maven.org/maven2/</url>
+      <id>nexus</id>
+      <name>Luna Common Release</name>
+      <url>https://lunabuild.akamai.com/nexus/content/repositories/releases/</url>
     </repository>
-     <repository>
-        <id>in-project</id>
-        <name>In Project Repo</name>
-        <url>file://${project.basedir}/libs</url>
-      </repository>
-  </repositories>
+    <snapshotRepository>
+      <id>nexus</id>
+      <name>Luna Common Snapshots</name>
+      <url>https://lunabuild.akamai.com/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
   <dependencies>
     <dependency>
       <groupId>commons-codec</groupId>
