@@ -10,3 +10,5 @@ initial_epoch_time = <value>
 final_epoch_time = <value>
 limit = <value>
 log_level = <value>
+proxy_host = <value>
+proxy_port = <value>
