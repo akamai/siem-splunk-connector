@@ -25,8 +25,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
@@ -338,7 +340,6 @@ public class Main extends Script {
 		Argument hostnameArgument = new Argument("hostname");
 		hostnameArgument.setName("hostname");
 		hostnameArgument.setDescription("");
-
 		hostnameArgument.setRequiredOnCreate(true);
 		hostnameArgument.setRequiredOnEdit(true);
 		scheme.addArgument(hostnameArgument);
@@ -400,8 +401,22 @@ public class Main extends Script {
 		log_levelArgument.setDescription("DEBUG, INFO, WARN, ERROR, FATAL");
 		log_levelArgument.setRequiredOnCreate(false);
 		log_levelArgument.setRequiredOnEdit(false);
-
 		scheme.addArgument(log_levelArgument);
+
+		Argument proxy_hostArgument = new Argument("proxy_host");
+		log_levelArgument.setName("proxy_host");
+		log_levelArgument.setDescription("DEBUG, INFO, WARN, ERROR, FATAL");
+		log_levelArgument.setRequiredOnCreate(false);
+		log_levelArgument.setRequiredOnEdit(false);
+		scheme.addArgument(proxy_hostArgument);
+
+		Argument proxy_portArgument = new Argument("proxy_port");
+		log_levelArgument.setName("proxy_port");
+		log_levelArgument.setDescription("");
+		log_levelArgument.setRequiredOnCreate(false);
+		log_levelArgument.setRequiredOnEdit(false);
+		log_levelArgument.setDataType(DataType.NUMBER);
+		scheme.addArgument(proxy_portArgument);
 
 		return (scheme);
 	}
@@ -482,6 +497,20 @@ public class Main extends Script {
 				limit = svp.getValue();
 			}
 			writeLog(EventWriter.DEBUG, log_level, String.format("limit=%s", limit), ew);
+
+			String proxy_host = "";
+			svp = ((SingleValueParameter) definition.getParameters().get("proxy_host"));
+			if (svp != null) {
+				proxy_host = svp.getValue();
+			}
+			writeLog(EventWriter.DEBUG, log_level, String.format("proxy_host=%s", proxy_host), ew);
+
+			String proxy_port = "";
+			svp = ((SingleValueParameter) definition.getParameters().get("proxy_port"));
+			if (svp != null) {
+				proxy_port = svp.getValue();
+			}
+			writeLog(EventWriter.DEBUG, log_level, String.format("proxy_port=%s", proxy_port), ew);
 
 			List<String> errors = new ArrayList<String>();
 
@@ -625,6 +654,47 @@ public class Main extends Script {
 
 			}
 			writeLog(EventWriter.DEBUG, log_level, "Limit validation complete", ew);
+
+			Boolean isProxySpecified = false;
+			Boolean isProxyValid = true;
+
+			writeLog(EventWriter.DEBUG, log_level, "Begin Proxy Host validation", ew);
+			if ((proxy_host != null) && (proxy_host.isEmpty() == false)) {
+				isProxySpecified = true;
+				String[] schemes = { "http", "https" };
+				UrlValidator urlValidator = new UrlValidator(schemes);
+				if (urlValidator.isValid(proxy_host) == false) {
+					errors.add(String.format("%s is an invalid Proxy Host", proxy_host));
+					isProxyValid = false;
+				}
+			} else {
+				isProxyValid = false;
+			}
+			writeLog(EventWriter.DEBUG, log_level, "Proxy Host validation complete", ew);
+
+			writeLog(EventWriter.DEBUG, log_level, "Begin Proxy Port validation", ew);
+			if ((proxy_port != null) && (proxy_port.isEmpty() == false)) {
+				isProxySpecified = true;
+				if (NumberUtils.isNumber(proxy_port) == true) {
+					if (Integer.parseInt(proxy_port) <= 0) {
+						errors.add(String.format("%s is not valid Proxy Port", proxy_port));
+						isProxyValid = false;
+					}
+				} else {
+					errors.add(String.format(proxy_port));
+					isProxyValid = false;
+				}
+			} else {
+				isProxyValid = false;
+			}
+			writeLog(EventWriter.DEBUG, log_level, "Proxy Port validation complete", ew);
+			writeLog(EventWriter.DEBUG, log_level, String.format("isProxyValid = %s", isProxyValid), ew);
+			writeLog(EventWriter.DEBUG, log_level, String.format("isProxySpecified = %s", isProxySpecified), ew);
+			writeLog(EventWriter.DEBUG, log_level, "Proxy Scheme validation complete", ew);
+
+			if ((isProxySpecified == true) && (isProxyValid == false)) {
+				errors.add("Please fill out all proxy fields with valid information");
+			}
 
 			if (errors.size() > 0) {
 				String formattedErrors = "";
@@ -829,6 +899,35 @@ public class Main extends Script {
 
 			writeLog(EventWriter.DEBUG, log_level, "limit=" + limit, ew);
 
+			String proxy_host = "";
+			String proxy_scheme = "";
+			try {
+				proxy_host = ((SingleValueParameter) inputs.getInputs().get(inputName).get("proxy_host")).getValue();
+
+				String lc_proxy_host = proxy_host.toLowerCase();
+				if (lc_proxy_host.startsWith("http") == true) {
+					proxy_scheme = "http";
+				}
+				if (lc_proxy_host.startsWith("https") == true) {
+					proxy_scheme = "https";
+				}
+
+			} catch (Exception ex) {
+			}
+
+			writeLog(EventWriter.DEBUG, log_level, "proxy_host=" + proxy_host, ew);
+			writeLog(EventWriter.DEBUG, log_level, "proxy_scheme=" + proxy_scheme, ew);
+
+			String proxy_port = "";
+			Integer proxy_port_int = null;
+			try {
+				proxy_port = ((SingleValueParameter) inputs.getInputs().get(inputName).get("proxy_port")).getValue();
+				proxy_port_int = Integer.parseInt(proxy_port);
+			} catch (Exception ex) {
+			}
+
+			writeLog(EventWriter.DEBUG, log_level, "proxy_port=" + proxy_port, ew);
+
 			String sessionKey = inputs.getSessionKey();
 			writeLog(EventWriter.DEBUG, log_level, "sessionKey=" + sessionKey, ew);
 
@@ -964,6 +1063,11 @@ public class Main extends Script {
 					.setRoutePlanner(new ApacheHttpClientEdgeGridRoutePlanner(credential)).build();
 
 			HttpGet request = new HttpGet(urlToRequest);
+			if ((proxy_host != null) && (proxy_host.isEmpty() == false)) {
+				HttpHost proxy = new HttpHost(proxy_host, proxy_port_int, proxy_scheme);
+				RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
+				request.setConfig(config);
+			}
 			HttpResponse response = null;
 			int statusCode = 0;
 
