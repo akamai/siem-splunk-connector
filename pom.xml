@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>TA-Akamai_SIEM</groupId>
   <artifactId>TA-Akamai_SIEM</artifactId>
-  <version>1.4.0-SNAPSHOT</version>
+  <version>1.4.0</version>
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
