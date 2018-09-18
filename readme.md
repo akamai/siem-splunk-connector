@@ -1,12 +1,16 @@
 # Set up Splunk connector 
 
-[Version 1.3.0](#3) August 2018
+[Version 1.4.1](#4) September 2018
+ 
+[Version 1.2.0](#2) October 2017
 
-<a href="#2">Version 1.2.0</a>  October 2017
+<h2 id="4">Version 1.4.1</h2><a name="4"></a>
 
-<h2 id="3">Version 1.3.0</h2><a name="3"></a>
+>**Update:** Version 1.4.1 of the sample Splunk Connector was released in September 2018. Changes include:
 
->**Update:** Version 1.3.0 of the sample Splunk Connector was released in August 2018. Changes include:
+>*   Proxy support
+
+>Version 1.3.0 of the sample Splunk Connector was a limited-availability realease in early August 2018, which includes:
 
 >*   You can now set log level. For example, if you have a problem, switch to DEBUG mode.
 >*   You no longer need to enter your Splunk username and password.
@@ -14,6 +18,8 @@
 >*   Fixed input validation issue.
 >*   Fixed an issue with SLF4J logging exceptions.
 >*   Tested on Splunk's new released version 7.1.0.
+>
+>Veresion 1.3.0 was a limited release and is no longer available, but 1.4.1 includes all its features. Read on for overview and installation instructions.
 
 
 The sample Splunk connector is a Splunk add-on that captures security events from the Akamai Security Events Collector, which exposes a RESTful API that lets the connector pull events in JSON format. The Splunk add-on converts security events data from JSON into CIM format. The Splunk instance then analyzes high volumes of data by indexing it.
@@ -78,6 +84,8 @@ To send Akamai security events to Splunk® instance, download and install the Ak
     *   **Hostname**. Enter the host URL you copied when you provisioned the SIEM API.
     *   **Security Configuration(s)**. Enter the **Configuration ID** you copied when you turned on SIEM in the Luna portal (allowed SIEM data collection).
     *   **Client Token**, **Client Secret**, and **Access Token**. Enter the values you copied when you provisioned the SIEM OPEN API.
+    *   **proxy_host**. Enter the proxy host name of your proxy server.
+    *   **proxy_port**. Enter the port number you use to connect to your proxy server.
     *   **Initial Epoch Time** and **Final Epoch time**. Leave these fields blank. If you ever encounter an issue with your data field, you can use them to [retrieve security event data for a set time period](Retrievepastsecurityevents-Splunkconnector.htm).
     *   **Limit**. If you want to limit the number of security events to pull, you can enter a number here to limit the results for each REST call. If not specified, the API retrieves a maximum of 150000 records per call.
     *   **log level** is automatically set to INFO. You can change it to WARN, ERROR, FATAL, or DEBUG to get more data for certain situations. For example, if you have a problem with the connector, type DEBUG to get more detailed messages and troubleshoot.
@@ -123,7 +131,7 @@ The sample Splunk connector is a Splunk add-on that captures security events fro
 
 > _**Full SIEM Setup:** There's more to SIEM setup than just installing this connector. You need to turn SIEM integration on, set up administrators, and provision the SIEM API.  [Learn more](https://developer.akamai.com/tools/siem-integration/index.html)_ 
 
-### System Requirements
+### System Requirements for 1.2.0
 
 Akamai’s Splunk Connector requires Sun JRE 1.8+ to be installed. Download the latest from the Sun Java site (Java Platform, Standard Edition) or install from a software distribution package on Linux.
 
@@ -140,7 +148,7 @@ To access the SIEM API from behind a proxy server, ensure that your proxy:
 *   does not interfere with HTTP request headers for those domains. If, due to a strict enterprise security policy, your proxy does change these headers, make sure that at a minimum you allow and don't change the `Host` and `Authorization` headers.
 
 
-### Hardware Requirements
+### Hardware Requirements for 1.2.0
 
 This sample application has been tested with the following operating systems:
 
@@ -154,7 +162,7 @@ Some additional hardware requirements:
 * 16 GB RAM
 * 2GB Free Disk Space
 
-### Install
+### Install version 1.2.0
 
 To send Akamai security events to Splunk® instance, download and install the Akamai SIEM add-on:
 
