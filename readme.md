@@ -1,8 +1,12 @@
 # Set up Splunk connector 
-
 <h2 id="4">Version 1.4.2</h2><a name="4"></a>
 
->**Update:** Version 1.4.2 of the sample Splunk Connector was released in September 2018. Changes include:
+>**Update:** Version 1.4.2 of the sample Splunk Connector was released in October 2018. Changes include:
+>*   Bug fix related to proxy support
+
+<h2 id="4">Version 1.4.1</h2><a name="4"></a>
+
+>**Update:** Version 1.4.1 of the sample Splunk Connector was released in September 2018. Changes include:
 
 >*   Proxy support
 
