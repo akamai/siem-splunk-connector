@@ -1,8 +1,8 @@
 # Set up Splunk connector 
 
-<h2 id="4">Version 1.4.1</h2><a name="4"></a>
+<h2 id="4">Version 1.4.2</h2><a name="4"></a>
 
->**Update:** Version 1.4.1 of the sample Splunk Connector was released in September 2018. Changes include:
+>**Update:** Version 1.4.2 of the sample Splunk Connector was released in September 2018. Changes include:
 
 >*   Proxy support
 
@@ -15,7 +15,7 @@
 >*   Fixed an issue with SLF4J logging exceptions.
 >*   Tested on Splunk's new released version 7.1.0.
 >
->Veresion 1.3.0 was a limited release and is no longer available, but 1.4.1 includes all its features. Read on for overview and installation instructions.
+>Veresion 1.3.0 was a limited release and is no longer available, but 1.4.2 includes all its features. Read on for overview and installation instructions.
 
 
 The sample Splunk connector is a Splunk add-on that captures security events from the Akamai Security Events Collector, which exposes a RESTful API that lets the connector pull events in JSON format. The Splunk add-on converts security events data from JSON into CIM format. The Splunk instance then analyzes high volumes of data by indexing it.

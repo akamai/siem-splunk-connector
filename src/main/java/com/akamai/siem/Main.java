@@ -905,11 +905,12 @@ public class Main extends Script {
 				proxy_host = ((SingleValueParameter) inputs.getInputs().get(inputName).get("proxy_host")).getValue();
 
 				String lc_proxy_host = proxy_host.toLowerCase();
-				if (lc_proxy_host.startsWith("http") == true) {
-					proxy_scheme = "http";
-				}
-				if (lc_proxy_host.startsWith("https") == true) {
+				if (lc_proxy_host.startsWith("https://") == true) {
 					proxy_scheme = "https";
+					proxy_host = lc_proxy_host.replace("https://", "");
+				} else if (lc_proxy_host.startsWith("http://") == true) {
+					proxy_scheme = "http";
+					proxy_host = lc_proxy_host.replace("http://", "");
 				}
 
 			} catch (Exception ex) {
