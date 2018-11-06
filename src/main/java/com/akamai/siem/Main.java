@@ -404,18 +404,18 @@ public class Main extends Script {
 		scheme.addArgument(log_levelArgument);
 
 		Argument proxy_hostArgument = new Argument("proxy_host");
-		log_levelArgument.setName("proxy_host");
-		log_levelArgument.setDescription("DEBUG, INFO, WARN, ERROR, FATAL");
-		log_levelArgument.setRequiredOnCreate(false);
-		log_levelArgument.setRequiredOnEdit(false);
+		proxy_hostArgument.setName("proxy_host");
+		proxy_hostArgument.setDescription("");
+		proxy_hostArgument.setRequiredOnCreate(false);
+		proxy_hostArgument.setRequiredOnEdit(false);
 		scheme.addArgument(proxy_hostArgument);
 
 		Argument proxy_portArgument = new Argument("proxy_port");
-		log_levelArgument.setName("proxy_port");
-		log_levelArgument.setDescription("");
-		log_levelArgument.setRequiredOnCreate(false);
-		log_levelArgument.setRequiredOnEdit(false);
-		log_levelArgument.setDataType(DataType.NUMBER);
+		proxy_portArgument.setName("proxy_port");
+		proxy_portArgument.setDescription("");
+		proxy_portArgument.setRequiredOnCreate(false);
+		proxy_portArgument.setRequiredOnEdit(false);
+		proxy_portArgument.setDataType(DataType.NUMBER);
 		scheme.addArgument(proxy_portArgument);
 
 		return (scheme);
@@ -1091,9 +1091,13 @@ public class Main extends Script {
 					long numLines = 0;
 					String next = "";
 					line = bufferedreader.readLine();
-					for (boolean first = true, last = (line == null); !last; first = false, line = next) {
+					for (boolean last = (line == null); !last; line = next) {
 						try {
-							last = ((next = bufferedreader.readLine()) == null);
+							// last line detection
+							next = bufferedreader.readLine();
+							if (next == null) {
+								last = true;
+							}
 
 							if (last) {
 
@@ -1186,6 +1190,10 @@ public class Main extends Script {
 											+ inputName + ": " + e.toString(), ew);
 								}
 							}
+						} catch (java.io.EOFException ex) {
+							writeLog(EventWriter.ERROR, log_level,
+									"EOFException processing line: " + line + ": " + ex.toString(), ew);
+							throw (ex);
 						} catch (Exception ex) {
 							writeLog(EventWriter.ERROR, log_level,
 									"Exception processing line: " + line + ": " + ex.toString(), ew);
