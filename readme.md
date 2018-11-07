@@ -1,7 +1,7 @@
 # Set up Splunk connector 
-<h2 id="4">Version 1.4.3</h2><a name="4"></a>
+<h2 id="4">Version 1.4.4</h2><a name="4"></a>
 
->**Update:** Version 1.4.3 of the sample Splunk Connector was released in November 2018. Changes include:
+>**Update:** Version 1.4.4 of the sample Splunk Connector was released in November 2018. Changes include:
 >*   Bug fix "java.io.EOFException: Unexpected end of ZLIB input stream" 
 
 <h2 id="4">Version 1.4.2</h2><a name="4"></a>
