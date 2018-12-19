@@ -233,9 +233,25 @@ public class Main extends Script {
 				String key = format("%s:client_secret:", definition.getName());
 				debug(ew, log_level, key);
 
+				String clearClientSecret = readClearPassword(definition.getName(), "client_secret", passwordCollection);
+				String clearClientToken = readClearPassword(definition.getName(), "client_token", passwordCollection);
+				String clearAccessToken = readClearPassword(definition.getName(), "access_token", passwordCollection);
+				
 				if (_MASK_.equalsIgnoreCase(client_secret)) {
-					if (passwordCollection.containsKey(key) == false) {
+					if (isEmpty(clearClientSecret)) {
 						errors.add("Please specify a valid Client Secret");
+					}
+				}
+				
+				if (_MASK_.equalsIgnoreCase(client_token)) {
+					if (isEmpty(clearClientToken)) {
+						errors.add("Please specify a valid Client Token");
+					}
+				}
+				
+				if (_MASK_.equalsIgnoreCase(access_token)) {
+					if (isEmpty(clearAccessToken)) {
+						errors.add("Please specify a valid Access Token");
 					}
 				}
 				debug(ew, log_level, "password validation complete");
