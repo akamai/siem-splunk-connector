@@ -964,10 +964,23 @@ public class Main extends Script {
 		}
 	}
 
-	private void handleSplunkRestServiceFailure(final EventWriter ew, String log_level, final RequestMessage requestMessage, final String endPoint) throws InputException {
+	private void handleSplunkRestServiceFailure(final EventWriter ew, String log_level, final RequestMessage requestMessage, ResponseMessage response, final String endPoint) throws InputException {
 		StringBuilder message = new StringBuilder();
-		message.append("Following end point failed.").append(" Service end point : ").append(endPoint).append(", Method : ").append(requestMessage.getMethod()).append(", Content : ")
-				.append(requestMessage.getContent());
+		int statusCode = 0;
+		StringBuilder responseMessage = new StringBuilder();
+		if(response != null) {
+			statusCode = response.getStatus();
+			try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getContent(), "UTF-8"))) {
+				String line = null;
+				while ((line = bufferedReader.readLine()) != null) {
+					responseMessage.append(line); 
+				}
+			} catch(IOException ioe) {
+				logException(ew, ioe);
+			}		
+		}
+		message.append("Following end point failed.").append(" Service end point : ").append(endPoint).append(", Method : ").append(requestMessage.getMethod()).append(", Request Message : ")
+				.append(requestMessage.getContent()).append(", Response Code :").append(statusCode).append(", Response :").append(responseMessage.toString());
 		error(ew, log_level, message.toString());
 		throw new InputException(message.toString());
 	}
@@ -988,8 +1001,8 @@ public class Main extends Script {
 
 		debug(ew, log_level, format("infoMsg= KVStore response = %s", kvResponseMessage.getStatus()));
 		// David Check this
-		if (kvResponseMessage.getStatus() != HttpStatus.SC_OK) {
-			handleSplunkRestServiceFailure(ew, log_level, kvRequestMessage, "/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state");
+		if (kvResponseMessage.getStatus() >= HttpStatus.SC_BAD_REQUEST) {
+			handleSplunkRestServiceFailure(ew, log_level, kvRequestMessage, kvResponseMessage, "/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state");
 		}
 
 		info(ew, log_level, "infoMsg=Parse KVstore data...");
@@ -1046,8 +1059,8 @@ public class Main extends Script {
 					requestMessage);
 			debug(ew, log_level, format("infoMsg= response = %s", kvStoreServiceResponse.getStatus()));
 			// David Check this
-			if (kvStoreServiceResponse.getStatus() != HttpStatus.SC_OK) {
-				handleSplunkRestServiceFailure(ew, log_level, requestMessage, String.format("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/%s", kvStoreStanza._key));
+			if (kvStoreServiceResponse.getStatus() >= HttpStatus.SC_BAD_REQUEST) {
+				handleSplunkRestServiceFailure(ew, log_level, requestMessage, kvStoreServiceResponse, String.format("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/%s", kvStoreStanza._key));
 			}
 		} else {
 
@@ -1066,8 +1079,8 @@ public class Main extends Script {
 			ResponseMessage kvStoreServiceResponse = kvStoreService.send("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/", requestMessage);
 			debug(ew, log_level, format("infoMsg= response = %s", kvStoreServiceResponse.getStatus()));
 			// David Check this
-			if (kvStoreServiceResponse.getStatus() != HttpStatus.SC_OK) {
-				handleSplunkRestServiceFailure(ew, log_level, requestMessage, String.format("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/"));
+			if (kvStoreServiceResponse.getStatus()  >= HttpStatus.SC_BAD_REQUEST) {
+				handleSplunkRestServiceFailure(ew, log_level, requestMessage, kvStoreServiceResponse, String.format("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/"));
 			}
 		}
 		return kvStoreStanza;
