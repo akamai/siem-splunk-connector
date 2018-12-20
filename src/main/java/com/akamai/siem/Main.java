@@ -662,7 +662,7 @@ public class Main extends Script {
 							event.setStanza(inputName);
 							event.setData(responseData);
 							ew.writeEvent(event);
-
+							newOffset = offset;
 							error_count++;
 						}
 					} catch (IOException ioe) {
@@ -966,7 +966,7 @@ public class Main extends Script {
 
 	private void handleSplunkRestServiceFailure(final EventWriter ew, String log_level, final RequestMessage requestMessage, final String endPoint) throws InputException {
 		StringBuilder message = new StringBuilder();
-		message.append("Following end point failed\n").append("Service end point : ").append(endPoint).append("Method : ").append(requestMessage.getMethod()).append("Content : ")
+		message.append("Following end point failed.").append(" Service end point : ").append(endPoint).append(", Method : ").append(requestMessage.getMethod()).append(", Content : ")
 				.append(requestMessage.getContent());
 		error(ew, log_level, message.toString());
 		throw new InputException(message.toString());
@@ -974,7 +974,7 @@ public class Main extends Script {
 
 	private void logAkamaiSIEMServiceFailure(final EventWriter ew, String log_level, final HttpRequest requestMessage, final String response, final String endPoint) {
 		StringBuilder message = new StringBuilder();
-		message.append("Following end point failed\n").append("Service end point : ").append(endPoint).append("Method : ").append("GET").append("Content : ").append(response);
+		message.append("Following end point failed.").append(" Service end point : ").append(endPoint).append(", Method : ").append("GET").append(", Content : ").append(response);
 		error(ew, log_level, message.toString());
 	}
 
@@ -1026,7 +1026,12 @@ public class Main extends Script {
 				kvStoreStanza.error_count = 0;
 			} else {
 				kvStoreStanza.offset = newOffset;
-				kvStoreStanza.error_count = kvStoreStanza.error_count + error_count;
+				// For successful rquest reset the count to 0
+				if(error_count == 0) {
+					kvStoreStanza.error_count = 0;
+				} else {
+					kvStoreStanza.error_count = kvStoreStanza.error_count + error_count;
+				}
 			}
 			kvStoreStanza.stanza_change = "0";
 			kvStoreStanza.stanza = inputName;
