@@ -161,25 +161,25 @@ public class Main extends Script {
 			ew.synchronizedLog(INFO, format("In %s, log_level=%s", methodName, log_level));
 
 			String session_key = definition.getSessionKey();
-			debug(ew, log_level, format("In %s, session_key=%s", methodName, session_key));
+			//debug(ew, log_level, format("In %s, session_key=%s", methodName, session_key));
 
 			String hostname = getInputValueAsString(definition, "hostname");
-			debug(ew, log_level, format("hostname=%s", hostname));
+			//debug(ew, log_level, format("hostname=%s", hostname));
 
 			if ((hostname != null) && !hostname.isEmpty()) {
 				hostname = "https://" + hostname;
 			}
 
 			String security_configuration_id_s_ = getInputValueAsString(definition, "security_configuration_id_s_");
-			debug(ew, log_level, format("security_configuration_id_s_=%s", security_configuration_id_s_));
+			//debug(ew, log_level, format("security_configuration_id_s_=%s", security_configuration_id_s_));
 
 			String client_token = getInputValueAsString(definition, "client_token");
-			debug(ew, log_level, format("client_token=%s", client_token));
+			//debug(ew, log_level, format("client_token=%s", client_token));
 
 			String client_secret = getInputValueAsString(definition, "client_secret");
 
 			String access_token = getInputValueAsString(definition, "access_token");
-			debug(ew, log_level, format("access_token=%s", access_token));
+			//debug(ew, log_level, format("access_token=%s", access_token));
 
 			String initial_epoch_time = getInputValueAsString(definition, "initial_epoch_time");
 			debug(ew, log_level, format("initial_epoch_time=%s", initial_epoch_time));
@@ -230,8 +230,8 @@ public class Main extends Script {
 				debug(ew, log_level, "get password service...");
 				PasswordCollection passwordCollection = akamaiSplunkService.getPasswords();
 				debug(ew, log_level, "construct stanza...");
-				String key = format("%s:client_secret:", definition.getName());
-				debug(ew, log_level, key);
+				//String key = format("%s:client_secret:", definition.getName());
+				//debug(ew, log_level, key);
 
 				String clearClientSecret = readClearPassword(definition.getName(), "client_secret", passwordCollection);
 				String clearClientToken = readClearPassword(definition.getName(), "client_token", passwordCollection);
@@ -339,7 +339,7 @@ public class Main extends Script {
 				requestMessage.getHeader().put("Content-Type", "application/json");
 				ResponseMessage rm = kvStoreService.send("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state", requestMessage);
 				debug(ew, log_level, format("infoMsg= In %s, KVStore response = %s", methodName, rm.getStatus()));
-				// David Check this
+
 				if (rm.getStatus() != HttpStatus.SC_OK) {
 					handleSplunkRestServiceFailure(ew, log_level, requestMessage, "/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state");
 				}
@@ -432,16 +432,16 @@ public class Main extends Script {
 					debug(ew, log_level, format("log_level=%s", log_level));
 
 					String hostname = getInputValueAsString(inputs.get(inputName), "hostname");
-					debug(ew, log_level, format("hostname=%s", hostname));
+					//debug(ew, log_level, format("hostname=%s", hostname));
 
 					String configIds = getInputValueAsString(inputs.get(inputName), "security_configuration_id_s_");
-					debug(ew, log_level, format("security_configuration_id_s_=%s", configIds));
+					//debug(ew, log_level, format("security_configuration_id_s_=%s", configIds));
 
 					String client_token = getInputValueAsString(inputs.get(inputName), "client_token");
-					debug(ew, log_level, format("client_token=%s", client_token));
+					//debug(ew, log_level, format("client_token=%s", client_token));
 
 					String access_token = getInputValueAsString(inputs.get(inputName), "access_token");
-					debug(ew, log_level, format("access_token=%s", access_token));
+					//debug(ew, log_level, format("access_token=%s", access_token));
 
 					String initial_epoch_time = getInputValueAsString(inputs.get(inputName), "initial_epoch_time");
 					debug(ew, log_level, format("initial_epoch_time=%s", initial_epoch_time));
@@ -481,7 +481,7 @@ public class Main extends Script {
 					String clearAccessToken = access_token;
 					
 					String sessionKey = inputDefinition.getSessionKey();
-					debug(ew, log_level, format("sessionKey=%s", sessionKey));
+					//debug(ew, log_level, format("sessionKey=%s", sessionKey));
 
 					if (_MASK_.equalsIgnoreCase(client_secret) == true) {
 						info(ew, log_level, format("infoMsg %s Service connect to Akamai_SIEM App...", methodName));
@@ -626,16 +626,16 @@ public class Main extends Script {
 												event.setData(newJsonObj.toString());
 												ew.writeEvent(event);
 		
-												debug(ew, log_level, format("event:%s", event.toString()));
-												debug(ew, log_level, format("data:%s", event.getData()));
-												debug(ew, log_level, format("getHost=%s", event.getHost()));
-												debug(ew, log_level, format("getIndex=%s", event.getIndex()));
-												debug(ew, log_level, format("getSource=%s", event.getSource()));
-												debug(ew, log_level, format("getSourceType=%s", event.getSourceType()));
-												debug(ew, log_level, format("getStanza=%s", event.getStanza()));
-												debug(ew, log_level, format("getTime=%s", event.getTime()));
-												debug(ew, log_level, format("end event=%s", event.toString()));
-												debug(ew, log_level, format("infoMsg=writeEvent complete"));
+												//debug(ew, log_level, format("event:%s", event.toString()));
+												//debug(ew, log_level, format("data:%s", event.getData()));
+												//debug(ew, log_level, format("getHost=%s", event.getHost()));
+												//debug(ew, log_level, format("getIndex=%s", event.getIndex()));
+												//debug(ew, log_level, format("getSource=%s", event.getSource()));
+												//debug(ew, log_level, format("getSourceType=%s", event.getSourceType()));
+												//debug(ew, log_level, format("getStanza=%s", event.getStanza()));
+												//debug(ew, log_level, format("getTime=%s", event.getTime()));
+												//debug(ew, log_level, format("end event=%s", event.toString()));
+												//debug(ew, log_level, format("infoMsg=writeEvent complete"));
 											} catch (Exception ex) {
 												error(ew, log_level, format("MalformedDataException writing to input %s : Exception Message : %s", inputName, ex.toString()));
 												error(ew, log_level, String.format("line=%s", previousLine));
@@ -994,13 +994,13 @@ public class Main extends Script {
 	private stanza_state getValuesFromKVStore(final EventWriter ew, String log_level, final Service kvStoreService, final String inputName) throws InputException, IOException {
 		info(ew, log_level, format("infoMsg=KV Service get...", ew));
 
-		debug(ew, log_level, format("getToken=%s", kvStoreService.getToken()));
+		//debug(ew, log_level, format("getToken=%s", kvStoreService.getToken()));
 		RequestMessage kvRequestMessage = new RequestMessage("GET");
 		kvRequestMessage.getHeader().put("Content-Type", "application/json");
 		ResponseMessage kvResponseMessage = kvStoreService.send("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state", kvRequestMessage);
 
 		debug(ew, log_level, format("infoMsg= KVStore response = %s", kvResponseMessage.getStatus()));
-		// David Check this
+
 		if (kvResponseMessage.getStatus() >= HttpStatus.SC_BAD_REQUEST) {
 			handleSplunkRestServiceFailure(ew, log_level, kvRequestMessage, kvResponseMessage, "/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state");
 		}
@@ -1058,7 +1058,7 @@ public class Main extends Script {
 			ResponseMessage kvStoreServiceResponse = kvStoreService.send(String.format("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/%s", kvStoreStanza._key),
 					requestMessage);
 			debug(ew, log_level, format("infoMsg= response = %s", kvStoreServiceResponse.getStatus()));
-			// David Check this
+
 			if (kvStoreServiceResponse.getStatus() >= HttpStatus.SC_BAD_REQUEST) {
 				handleSplunkRestServiceFailure(ew, log_level, requestMessage, kvStoreServiceResponse, String.format("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/%s", kvStoreStanza._key));
 			}
@@ -1078,7 +1078,7 @@ public class Main extends Script {
 
 			ResponseMessage kvStoreServiceResponse = kvStoreService.send("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/", requestMessage);
 			debug(ew, log_level, format("infoMsg= response = %s", kvStoreServiceResponse.getStatus()));
-			// David Check this
+
 			if (kvStoreServiceResponse.getStatus()  >= HttpStatus.SC_BAD_REQUEST) {
 				handleSplunkRestServiceFailure(ew, log_level, requestMessage, kvStoreServiceResponse, String.format("/servicesNS/nobody/TA-Akamai_SIEM/storage/collections/data/akamai_state/"));
 			}
@@ -1259,7 +1259,7 @@ public class Main extends Script {
 											.append(URLEncoder.encode(content.getSourcetype(), "UTF-8"));
 										}
 										String formurlencoded = builder.toString();
-										debug(ew, log_level, format("infoMsg=%s,formurlencoded=%s", methodName, formurlencoded));
+										//debug(ew, log_level, format("infoMsg=%s,formurlencoded=%s", methodName, formurlencoded));
 										postMessage.setContent(formurlencoded);
 										ResponseMessage rm = akamaiSplunkService
 												.send(format("/servicesNS/nobody/TA-Akamai_SIEM/data/inputs/TA-Akamai_SIEM/%s?output_mode=json", URLEncoder.encode(inputStanza, "UTF-8")), postMessage);
