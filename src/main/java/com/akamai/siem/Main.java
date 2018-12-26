@@ -464,15 +464,15 @@ public class Main extends Script {
 							proxy_host = lc_proxy_host.replace("http://", "");
 						}
 					}
-					debug(ew, log_level, format("proxy_host=%s", proxy_host));
-					debug(ew, log_level, format("proxy_scheme=%s", proxy_scheme));
+					//debug(ew, log_level, format("proxy_host=%s", proxy_host));
+					//debug(ew, log_level, format("proxy_scheme=%s", proxy_scheme));
 
 					String proxy_port_string = getInputValueAsString(inputs.get(inputName), "proxy_port");
 					Integer proxy_port = null;
 					if (!isEmpty(proxy_port_string)) {
 						proxy_port = Integer.valueOf(proxy_port_string);
 					}
-					debug(ew, log_level, format("proxy_port=%s", proxy_port));
+					//debug(ew, log_level, format("proxy_port=%s", proxy_port));
 
 					String client_secret = getInputValueAsString(inputs.get(inputName), "client_secret");
 					
@@ -1049,7 +1049,7 @@ public class Main extends Script {
 			kvStoreStanza.stanza_change = "0";
 			kvStoreStanza.stanza = inputName;
 
-			debug(ew, log_level, format("kvStoreStanza=%s", gson.toJson(kvStoreStanza)));
+			//debug(ew, log_level, format("kvStoreStanza=%s", gson.toJson(kvStoreStanza)));
 
 			RequestMessage requestMessage = new RequestMessage("POST");
 			requestMessage.getHeader().put("Content-Type", "application/json");
