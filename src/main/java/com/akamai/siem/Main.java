@@ -191,10 +191,10 @@ public class Main extends Script {
 			debug(ew, log_level, format("limit=%s", limit));
 
 			String proxy_host = getInputValueAsString(definition, "proxy_host");
-			debug(ew, log_level, format("proxy_host=%s", proxy_host));
+			//debug(ew, log_level, format("proxy_host=%s", proxy_host));
 
 			String proxy_port = getInputValueAsString(definition, "proxy_port");
-			debug(ew, log_level, format("proxy_port=%s", proxy_port));
+			//debug(ew, log_level, format("proxy_port=%s", proxy_port));
 
 			debug(ew, log_level, "Begin Log Level validation");
 			List<String> errors = new ArrayList<String>();
