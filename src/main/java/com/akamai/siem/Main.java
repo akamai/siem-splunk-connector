@@ -730,7 +730,15 @@ public class Main extends Script {
 					urlDecodeValue = java.net.URLDecoder.decode(v, "UTF-8");
 				} catch (Exception ex) {
 				}
-				String[] tokenizedResult = urlDecodeValue.split(";");
+				
+				/**
+				 * SECKSD-3277 - Fix: split urlDecodeValue on ';' only for base64fields and custom.
+				 */
+				String[] tokenizedResult = {urlDecodeValue};
+				if ((base64fields.contains(k) == true) || (isCustom == true)) {
+					tokenizedResult = urlDecodeValue.split(";");
+				}
+				
 				if (tokenizedResult.length > 1) {
 					ArrayList<String> decodedValues = new ArrayList<String>();
 					for (String s : tokenizedResult) {
