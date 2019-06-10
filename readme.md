@@ -1,4 +1,9 @@
 # Set up Splunk connector 
+<h2 id="4">Version 1.4.7</h2><a name="4"></a>
+
+>**Update:** Version 1.4.7 of the sample Splunk Connector was released in June 2019. Changes include:
+>*   Bug fix "Incorrect parsing of header fields" 
+
 <h2 id="4">Version 1.4.5</h2><a name="4"></a>
 
 >**Update:** Version 1.4.5 of the sample Splunk Connector was released in November 2018. Changes include:
