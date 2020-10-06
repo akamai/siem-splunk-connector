@@ -1,197 +1,174 @@
 
 package com.akamai.siem;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Content {
 
-	@SerializedName("access_token")
-	@Expose
-	private String accessToken;
-	@SerializedName("client_secret")
-	@Expose
-	private String clientSecret;
-	@SerializedName("client_token")
-	@Expose
-	private String clientToken;
-	@SerializedName("disabled")
-	@Expose
-	private Boolean disabled;
-	@SerializedName("eai:acl")
-	@Expose
-	private Object eaiAcl;
-	@SerializedName("final_epoch_time")
-	@Expose
-	private Integer finalEpochTime;
-	@SerializedName("host")
-	@Expose
-	private String host;
-	@SerializedName("host_resolved")
-	@Expose
-	private String hostResolved;
-	@SerializedName("hostname")
-	@Expose
-	private String hostname;
-	@SerializedName("index")
-	@Expose
-	private String index;
-	@SerializedName("initial_epoch_time")
-	@Expose
-	private Integer initialEpochTime;
-	@SerializedName("interval")
-	@Expose
-	private String interval;
-	@SerializedName("limit")
-	@Expose
-	private Integer limit;
-	@SerializedName("log_level")
-	@Expose
-	private String logLevel;
-	@SerializedName("security_configuration_id_s_")
-	@Expose
-	private String securityConfigurationIdS;
-	@SerializedName("sourcetype")
-	@Expose
-	private String sourcetype;
-	@SerializedName("start_by_shell")
-	@Expose
-	private String startByShell;
+  @JsonProperty("access_token")
+  private String accessToken;
+  @JsonProperty("client_secret")
+  private String clientSecret;
+  @JsonProperty("client_token")
+  private String clientToken;
+  private Boolean disabled;
+  private Object eaiAcl;
+  private String host;
+  @JsonProperty("host_resolved")
+  private String hostResolved;
+  private String hostname;
+  private String index;
+  @JsonProperty("initial_epoch_time")
+  private Integer initialEpochTime;
+  @JsonProperty("final_epoch_time")
+  private Integer finalEpochTime;
+  private String interval;
+  private Integer limit;
+  @JsonProperty("log_level")
+  private String logLevel;
+  @JsonProperty("security_configuration_id_s_")
+  private String securityConfigurationids;
+  private String sourcetype;
+  private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-	public String getAccessToken() {
-		return accessToken;
-	}
+  public String getAccessToken() {
+    return accessToken;
+  }
 
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
+  public void setAccessToken(String accessToken) {
+    this.accessToken = accessToken;
+  }
 
-	public String getClientSecret() {
-		return clientSecret;
-	}
+  public String getClientSecret() {
+    return clientSecret;
+  }
 
-	public void setClientSecret(String clientSecret) {
-		this.clientSecret = clientSecret;
-	}
+  public void setClientSecret(String clientSecret) {
+    this.clientSecret = clientSecret;
+  }
 
-	public String getClientToken() {
-		return clientToken;
-	}
+  public String getClientToken() {
+    return clientToken;
+  }
 
-	public void setClientToken(String clientToken) {
-		this.clientToken = clientToken;
-	}
+  public void setClientToken(String clientToken) {
+    this.clientToken = clientToken;
+  }
 
-	public Boolean getDisabled() {
-		return disabled;
-	}
+  public Boolean getDisabled() {
+    return disabled;
+  }
 
-	public void setDisabled(Boolean disabled) {
-		this.disabled = disabled;
-	}
+  public void setDisabled(Boolean disabled) {
+    this.disabled = disabled;
+  }
 
-	public Object getEaiAcl() {
-		return eaiAcl;
-	}
+  public Object getEaiAcl() {
+    return eaiAcl;
+  }
 
-	public void setEaiAcl(Object eaiAcl) {
-		this.eaiAcl = eaiAcl;
-	}
+  public void setEaiAcl(Object eaiAcl) {
+    this.eaiAcl = eaiAcl;
+  }
 
-	public Integer getFinalEpochTime() {
-		return finalEpochTime;
-	}
+  public String getHost() {
+    return host;
+  }
 
-	public void setFinalEpochTime(Integer finalEpochTime) {
-		this.finalEpochTime = finalEpochTime;
-	}
+  public void setHost(String host) {
+    this.host = host;
+  }
 
-	public String getHost() {
-		return host;
-	}
+  public String getHostResolved() {
+    return hostResolved;
+  }
 
-	public void setHost(String host) {
-		this.host = host;
-	}
+  public void setHostResolved(String hostResolved) {
+    this.hostResolved = hostResolved;
+  }
 
-	public String getHostResolved() {
-		return hostResolved;
-	}
+  public String getHostname() {
+    return hostname;
+  }
 
-	public void setHostResolved(String hostResolved) {
-		this.hostResolved = hostResolved;
-	}
+  public void setHostname(String hostname) {
+    this.hostname = hostname;
+  }
 
-	public String getHostname() {
-		return hostname;
-	}
+  public String getIndex() {
+    return index;
+  }
 
-	public void setHostname(String hostname) {
-		this.hostname = hostname;
-	}
+  public void setIndex(String index) {
+    this.index = index;
+  }
 
-	public String getIndex() {
-		return index;
-	}
+  public Integer getInitialEpochTime() {
+    return initialEpochTime;
+  }
 
-	public void setIndex(String index) {
-		this.index = index;
-	}
+  public void setInitialEpochTime(Integer initialEpochTime) {
+    this.initialEpochTime = initialEpochTime;
+  }
 
-	public Integer getInitialEpochTime() {
-		return initialEpochTime;
-	}
+  public Integer getFinalEpochTime() {
+    return finalEpochTime;
+  }
 
-	public void setInitialEpochTime(Integer initialEpochTime) {
-		this.initialEpochTime = initialEpochTime;
-	}
+  public void setFinalEpochTime(Integer finalEpochTime) {
+    this.finalEpochTime = finalEpochTime;
+  }
 
-	public String getInterval() {
-		return interval;
-	}
+  public String getInterval() {
+    return interval;
+  }
 
-	public void setInterval(String interval) {
-		this.interval = interval;
-	}
+  public void setInterval(String interval) {
+    this.interval = interval;
+  }
 
-	public Integer getLimit() {
-		return limit;
-	}
+  public Integer getLimit() {
+    return limit;
+  }
 
-	public void setLimit(Integer limit) {
-		this.limit = limit;
-	}
+  public void setLimit(Integer limit) {
+    this.limit = limit;
+  }
 
-	public String getLogLevel() {
-		return logLevel;
-	}
+  public String getLogLevel() {
+    return logLevel;
+  }
 
-	public void setLogLevel(String logLevel) {
-		this.logLevel = logLevel;
-	}
+  public void setLogLevel(String logLevel) {
+    this.logLevel = logLevel;
+  }
 
-	public String getSecurityConfigurationIdS() {
-		return securityConfigurationIdS;
-	}
+  public String getSecurityConfigurationIdS() {
+    return securityConfigurationids;
+  }
 
-	public void setSecurityConfigurationIdS(String securityConfigurationIdS) {
-		this.securityConfigurationIdS = securityConfigurationIdS;
-	}
+  public void setSecurityConfigurationIdS(String securityConfigurationIdS) {
+    this.securityConfigurationids = securityConfigurationIdS;
+  }
 
-	public String getSourcetype() {
-		return sourcetype;
-	}
+  public String getSourcetype() {
+    return sourcetype;
+  }
 
-	public void setSourcetype(String sourcetype) {
-		this.sourcetype = sourcetype;
-	}
+  public void setSourcetype(String sourcetype) {
+    this.sourcetype = sourcetype;
+  }
 
-	public String getStartByShell() {
-		return startByShell;
-	}
+  public Map<String, Object> getAdditionalProperties() {
+    return this.additionalProperties;
+  }
 
-	public void setStartByShell(String startByShell) {
-		this.startByShell = startByShell;
-	}
+  public void setAdditionalProperty(String name, Object value) {
+    this.additionalProperties.put(name, value);
+  }
 
 }
