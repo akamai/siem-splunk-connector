@@ -1,76 +1,62 @@
 
 package com.akamai.siem;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 public class Links_ {
 
-    @SerializedName("alternate")
-    @Expose
-    private String alternate;
-    @SerializedName("list")
-    @Expose
-    private String list;
-    @SerializedName("_reload")
-    @Expose
-    private String reload;
-    @SerializedName("edit")
-    @Expose
-    private String edit;
-    @SerializedName("remove")
-    @Expose
-    private String remove;
-    @SerializedName("disable")
-    @Expose
-    private String disable;
 
-    public String getAlternate() {
-        return alternate;
-    }
+  private String alternate;
+  private String list;
+  private String reload;
+  private String edit;
+  private String remove;
+  private String disable;
 
-    public void setAlternate(String alternate) {
-        this.alternate = alternate;
-    }
+  public String getAlternate() {
+    return alternate;
+  }
 
-    public String getList() {
-        return list;
-    }
+  public void setAlternate(String alternate) {
+    this.alternate = alternate;
+  }
 
-    public void setList(String list) {
-        this.list = list;
-    }
+  public String getList() {
+    return list;
+  }
 
-    public String getReload() {
-        return reload;
-    }
+  public void setList(String list) {
+    this.list = list;
+  }
 
-    public void setReload(String reload) {
-        this.reload = reload;
-    }
+  public String getReload() {
+    return reload;
+  }
 
-    public String getEdit() {
-        return edit;
-    }
+  public void setReload(String reload) {
+    this.reload = reload;
+  }
 
-    public void setEdit(String edit) {
-        this.edit = edit;
-    }
+  public String getEdit() {
+    return edit;
+  }
 
-    public String getRemove() {
-        return remove;
-    }
+  public void setEdit(String edit) {
+    this.edit = edit;
+  }
 
-    public void setRemove(String remove) {
-        this.remove = remove;
-    }
+  public String getRemove() {
+    return remove;
+  }
 
-    public String getDisable() {
-        return disable;
-    }
+  public void setRemove(String remove) {
+    this.remove = remove;
+  }
 
-    public void setDisable(String disable) {
-        this.disable = disable;
-    }
+  public String getDisable() {
+    return disable;
+  }
+
+  public void setDisable(String disable) {
+    this.disable = disable;
+  }
 
 }
