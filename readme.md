@@ -1,4 +1,10 @@
 # Set up Splunk connector 
+<h2 id="4">Version 1.4.8</h2><a name="4"></a>
+
+>**Update:** Version 1.4.8 of the sample Splunk Connector was released in October 2020. Changes include:
+>*   Feature enhancement "Performance improvement" Verified 600K events per minute on AWS c5n.4xlarge(16 core, 42 GiB RAM,	3.5 Gbps EBS Bandwidth,	Up to 25 Gbps Network Bandwidth)
+>*   Added fix to restart data input when execution time exceeds configured interval
+
 <h2 id="4">Version 1.4.7</h2><a name="4"></a>
 
 >**Update:** Version 1.4.7 of the sample Splunk Connector was released in June 2019. Changes include:
